@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+import pygame
+
+from menu import Menu
+from modes import Forever
+from render import Render
+from controller import Keyboard
+from cuts import ShowLogo
+
+def endless_game(screen):
+    background = pygame.image.load('res/ingamegnd.png').convert_alpha()
+    screen.blit(background, (0, 0))
+    pygame.display.flip()
+
+    tetris = Forever()
+
+    user = Keyboard(tetris.game)
+    render = Render(tetris)
+
+    while not tetris.game_over:
+        user.update()
+        tetris.update()
+
+        dirty = [screen.blit(render.update(), (20, 40))]
+        dirty.append(screen.blit(render.next, (250, 50)))
+        dirty.append(screen.blit(render.score, (250, 10)))
+        pygame.display.update(dirty)
+
+        
+def main():
+    screen = pygame.display.set_mode((640, 480))
+    ShowLogo(screen)
+
+    exit_game = False
+    while not exit_game:
+        menu = Menu(screen, ['Jugar', 'Salir'],
+                    pygame.image.load('res/menugnd.png'))
+        menu.run()
+        exit_game = (menu.cancelled or menu.selected == 1)
+
+        if menu.selected == 0:
+            endless_game(screen)
+            
+if __name__ == '__main__':
+    pygame.init()
+    main()
