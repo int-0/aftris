@@ -119,10 +119,8 @@ class Levels(object):
             return False
         self.__current_stage = level_no
         level = self.__stages[self.__current_stage]
-
         new_speed = self.game.speed + level.speed
-        self.__game = game.Tetris(self.__game.size,
-                                  new_speed)
+        self.__game = game.Tetris(self.__game.size, new_speed)
         for position, block in level.extra_blocks:
             self.__game.board[position[1]][position[0]] = block
         self.__show_next = level.show_next
@@ -136,11 +134,11 @@ class Levels(object):
         return self.__lines
 
     def update(self):
-        if not self.completed:
-            lines = self.game.update()
-            self.__score += lines * lines * 10
-            self.__lines_to_go -= lines
-
+        if self.completed:
+            return
+        lines = self.game.update()
+        self.__score += lines * lines * 10
+        self.__lines_to_go -= lines
         if self.__lines_to_go <= 0:
             if self.__end_level:
                 self.__end_level(level_no)

@@ -8,27 +8,52 @@ from render import Render
 from controller import Keyboard
 from cuts import ShowLogo
 
-def aftris_game(screen, mode):
-    background = pygame.image.load('res/ingamegnd.png').convert_alpha()
-    screen.blit(background, (0, 0))
-    pygame.display.flip()
+TEST_LEVELS=[
+    modes.Stage({
+        'speed_var': 0,
+        'extra_blocks': [((0, 0), 1)],
+        'lines_to_go': 10,
+        'show_next': True}),
+    modes.Stage({
+        'speed_var': 0,
+        'extra_blocks': [((1, 0), 1)],
+        'lines_to_go': 10,
+        'show_next': True})
+]
 
-    if mode == 0:
-        tetris = modes.Levels()
-    elif mode == 1:
-        tetris = modes.Forever()
 
-    user = Keyboard(tetris.game)
-    render = Render(tetris)
+class Aftris(object):
+    def __init__(self, screen, mode):
+        self.__background = pygame.image.load('res/ingamegnd.png').convert_alpha()
+        self.__screen = screen
+        self.__screen.blit(self.__background, (0, 0))
+        pygame.display.flip()
+        self.__tetris = None
+        if mode == 0:
+            self.__tetris = modes.Levels(stages=TEST_LEVELS,
+                                         start_level_callback=self.new_level)
+        elif mode == 1:
+            self.__tetris = modes.Forever()
+        self.__reatach_user()
 
-    while not tetris.game_over:
-        user.update()
-        tetris.update()
+    def new_level(self, level):
+        if self.__tetris is None:
+            return
+        self.__reatach_user()
+        
+    def __reatach_user(self):
+        self.__user = Keyboard(self.__tetris.game)
+        self.__render = Render(self.__tetris)
 
-        dirty = [screen.blit(render.update(), (20, 40))]
-        dirty.append(screen.blit(render.next, (250, 50)))
-        dirty.append(screen.blit(render.score, (250, 10)))
-        pygame.display.update(dirty)
+    def run(self):
+        while not self.__tetris.game_over:
+            self.__user.update()
+            self.__tetris.update()
+
+            dirty = [self.__screen.blit(self.__render.update(), (20, 40))]
+            dirty.append(self.__screen.blit(self.__render.next, (250, 50)))
+            dirty.append(self.__screen.blit(self.__render.score, (250, 10)))
+            pygame.display.update(dirty)
 
         
 def main():
@@ -45,7 +70,7 @@ def main():
         exit_game = (menu.cancelled or menu.selected == 2)
 
         if not exit_game:
-            aftris_game(screen, mode=menu.selected)
+            Aftris(screen, mode=menu.selected).run()
             
 if __name__ == '__main__':
     pygame.init()
