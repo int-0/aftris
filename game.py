@@ -81,6 +81,10 @@ class Tetris(object):
         return self.__board_size
 
     @property
+    def speed(self):
+        return self.__game_speed
+
+    @property
     def CW_rotated_piece(self):
         return zip(*self.__current[::-1])
 

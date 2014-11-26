@@ -3,17 +3,20 @@
 import pygame
 
 from menu import Menu
-from modes import Forever
+import modes
 from render import Render
 from controller import Keyboard
 from cuts import ShowLogo
 
-def endless_game(screen):
+def aftris_game(screen, mode):
     background = pygame.image.load('res/ingamegnd.png').convert_alpha()
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-    tetris = Forever()
+    if mode == 0:
+        tetris = modes.Levels()
+    elif mode == 1:
+        tetris = modes.Forever()
 
     user = Keyboard(tetris.game)
     render = Render(tetris)
@@ -34,13 +37,15 @@ def main():
 
     exit_game = False
     while not exit_game:
-        menu = Menu(screen, ['Jugar', 'Salir'],
+        menu = Menu(screen, ['Level Mode',
+                             'Endless Mode',
+                             'Exit'],
                     pygame.image.load('res/menugnd.png'))
         menu.run()
-        exit_game = (menu.cancelled or menu.selected == 1)
+        exit_game = (menu.cancelled or menu.selected == 2)
 
-        if menu.selected == 0:
-            endless_game(screen)
+        if not exit_game:
+            aftris_game(screen, mode=menu.selected)
             
 if __name__ == '__main__':
     pygame.init()
