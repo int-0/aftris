@@ -24,18 +24,28 @@ TEST_LEVELS=[
 
 class Aftris(object):
     def __init__(self, screen, mode):
-        self.__background = pygame.image.load('res/ingamegnd.png').convert_alpha()
         self.__screen = screen
+        self.change_background(pygame.image.load('res/ingamegnd.png'))
         self.__screen.blit(self.__background, (0, 0))
         pygame.display.flip()
         self.__tetris = None
         if mode == 0:
-            self.__tetris = modes.Levels(stages=TEST_LEVELS,
-                                         start_level_callback=self.new_level)
+            self.__tetris = modes.Levels(
+                stages=TEST_LEVELS,
+                start_level_callback=self.new_level,
+                change_bckgnd_callback=self.change_background
+            )
         elif mode == 1:
-            self.__tetris = modes.Forever()
+            self.__tetris = modes.Forever(
+                change_bckgnd_callback=self.change_background
+            )
         self.__reatach_user()
 
+    def change_background(self, new_background):
+        self.__background = new_background
+        self.__screen.blit(self.__background, (0, 0))
+        pygame.display.flip()
+        
     def new_level(self, level):
         if self.__tetris is None:
             return

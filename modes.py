@@ -1,17 +1,30 @@
 #!/usr/bin/env python
 
 import game
+import pygame
 
 LINES_TO_SPEED_UP = 10
 
+BACKGROUNDS = [
+    pygame.image.load('res/ingamegnd.png'),
+    pygame.image.load('res/ingamegnd2.png')
+]
+
+LINES_TO_CYCLE = 19
+
 class Forever(object):
     def __init__(self, size=game.DEFAULT_SIZE,
-                 initial_speed=game.DEFAULT_SPEED):
+                 initial_speed=game.DEFAULT_SPEED,
+                 change_bckgnd_callback=None):
         self.__game = game.Tetris(size, initial_speed)
 
         self.__score = 0
         self.__lines = 0
 
+        self.__change_background = change_bckgnd_callback
+        self.__lines_to_cycle = LINES_TO_CYCLE
+        self.__current_background = 0
+        
         self.__lines_to_speed_up = LINES_TO_SPEED_UP
 
     @property
@@ -45,6 +58,14 @@ class Forever(object):
             self.__lines_to_speed_up = LINES_TO_SPEED_UP
             self.__game.increase_speed(10)
 
+        self.__lines_to_cycle -= lines
+        if self.__lines_to_cycle < 0:
+            self.__lines_to_cycle = LINES_TO_CYCLE
+            if self.__change_background is not None:
+                self.__current_background += 1
+                self.__current_background %= len(BACKGROUNDS)
+                self.__change_background(BACKGROUNDS[self.__current_background])
+
 
 class Stage(object):
     def __init__(self, definition={
@@ -75,7 +96,8 @@ class Levels(object):
                  initial_speed=game.DEFAULT_SPEED,
                  stages=[Stage()],
                  start_level_callback=None,
-                 end_level_callback=None):
+                 end_level_callback=None,
+                 change_bckgnd_callback=None):
         self.__game = game.Tetris(size, initial_speed)
 
         self.__score = 0
@@ -89,7 +111,7 @@ class Levels(object):
 
         self.__start_level = start_level_callback
         self.__end_level = end_level_callback
-
+        self.__change_background = change_bckgnd_callback
         self.load_level(self.__current_stage)
 
 
