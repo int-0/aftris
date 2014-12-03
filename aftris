@@ -13,12 +13,14 @@ TEST_LEVELS=[
         'speed_var': 0,
         'extra_blocks': [((0, 0), 1)],
         'lines_to_go': 10,
-        'show_next': True}),
+        'show_next': True,
+        'background': pygame.image.load('res/ingamegnd.png')}),
     modes.Stage({
         'speed_var': 0,
         'extra_blocks': [((1, 0), 1)],
         'lines_to_go': 10,
-        'show_next': True})
+        'show_next': True,
+        'background': pygame.image.load('res/ingamegnd2.png')})
 ]
 
 

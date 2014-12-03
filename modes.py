@@ -72,11 +72,13 @@ class Stage(object):
             'speed_var': game.DEFAULT_SPEED,
             'extra_blocks': [],
             'lines_to_go': 10,
-            'show_next': True }):
+            'show_next': True,
+            'background': None}):
         self.speed = definition['speed_var']
         self.extra_blocks = definition['extra_blocks']
         self.lines_to_go = definition['lines_to_go']
         self.show_next = definition['show_next']
+        self.background = definition['background']
 
     def add_block(self, position, color):
         self.extra_blocks.append((position, color))
@@ -87,7 +89,8 @@ class Stage(object):
             'speed_var': self.speed,
             'extra_blocks': self.extra_blocks,
             'lines_to_go': self.lines_to_go,
-            'show_next': self.show_next
+            'show_next': self.show_next,
+            'background': self.background
         }
 
 
@@ -147,6 +150,8 @@ class Levels(object):
             self.__game.board[position[1]][position[0]] = block
         self.__show_next = level.show_next
         self.__lines_to_go = level.lines_to_go
+        if level.background:
+            self.__change_background(level.background)
         if self.__start_level:
             self.__start_level(level_no)
         return True
