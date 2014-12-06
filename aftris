@@ -2,11 +2,12 @@
 
 import pygame
 
-from menu import Menu
 import modes
+from menu import Menu
 from render import Render
 from controller import Keyboard
 from cuts import ShowLogo
+
 
 TEST_LEVELS=[
     modes.Stage({
