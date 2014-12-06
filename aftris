@@ -35,12 +35,16 @@ class Aftris(object):
         if mode == 0:
             self.__tetris = modes.Levels(
                 stages=TEST_LEVELS,
-                start_level_callback=self.new_level,
-                change_bckgnd_callback=self.change_background
+                callbacks={
+                    'start_level': self.new_level,
+                    'change_background': self.change_background
+                }
             )
         elif mode == 1:
             self.__tetris = modes.Forever(
-                change_bckgnd_callback=self.change_background
+                callbacks={
+                    'change_background': self.change_background
+                }
             )
         self.__reatach_user()
 

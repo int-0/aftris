@@ -12,60 +12,6 @@ BACKGROUNDS = [
 
 LINES_TO_CYCLE = 19
 
-class Forever(object):
-    def __init__(self, size=game.DEFAULT_SIZE,
-                 initial_speed=game.DEFAULT_SPEED,
-                 change_bckgnd_callback=None):
-        self.__game = game.Tetris(size, initial_speed)
-
-        self.__score = 0
-        self.__lines = 0
-
-        self.__change_background = change_bckgnd_callback
-        self.__lines_to_cycle = LINES_TO_CYCLE
-        self.__current_background = 0
-        
-        self.__lines_to_speed_up = LINES_TO_SPEED_UP
-
-    @property
-    def show_next(self):
-        return True
-
-    @property
-    def game(self):
-        return self.__game
-
-    @property
-    def game_over(self):
-        return self.__game.game_over
-
-    @property
-    def score(self):
-        return self.__score
-
-    @property
-    def lines(self):
-        return self.__lines
-
-    def update(self):
-        lines = self.game.update()
-
-        self.__score += lines * lines * 10
-        self.__lines += lines
-
-        self.__lines_to_speed_up -= lines
-        if self.__lines_to_speed_up < 0:
-            self.__lines_to_speed_up = LINES_TO_SPEED_UP
-            self.__game.increase_speed(10)
-
-        self.__lines_to_cycle -= lines
-        if self.__lines_to_cycle < 0:
-            self.__lines_to_cycle = LINES_TO_CYCLE
-            if self.__change_background is not None:
-                self.__current_background += 1
-                self.__current_background %= len(BACKGROUNDS)
-                self.__change_background(BACKGROUNDS[self.__current_background])
-
 
 class Stage(object):
     def __init__(self, definition={
@@ -94,17 +40,101 @@ class Stage(object):
         }
 
 
-class Levels(object):
+class Mode(object):
+    def __init__(self,
+                 board_size=game.DEFAULT_SIZE,
+                 initial_speed=game.DEFAULT_SPEED,
+                 callbacks={}):
+        self.__game = game.Tetris(board_size, initial_speed)
+        self.__last_completed = 0
+        self.__lines = 0
+        
+    @property
+    def show_next(self):
+        return False
+
+    @property
+    def game(self):
+        return self.__game
+
+    def set_game(self, game):
+        self.__game = game
+        
+    @property
+    def game_over(self):
+        return self.__game.game_over
+
+    @property
+    def score(self):
+        return 0
+
+    @property
+    def lines(self):
+        return self.__lines
+
+    @property
+    def last_lines_completed(self):
+        return self.__last_completed
+    
+    @property
+    def completed(self):
+        return False
+
+    def update(self):
+        self.__last_completed = self.game.update()
+        self.__lines += self.__last_completed
+
+
+class Forever(Mode):
     def __init__(self, size=game.DEFAULT_SIZE,
                  initial_speed=game.DEFAULT_SPEED,
-                 stages=[Stage()],
-                 start_level_callback=None,
-                 end_level_callback=None,
-                 change_bckgnd_callback=None):
-        self.__game = game.Tetris(size, initial_speed)
+                 callbacks=None):
+        Mode.__init__(self, size, initial_speed, callbacks)
 
         self.__score = 0
-        self.__lines = 0
+
+        self.__change_background = callbacks.get('change_background', None)
+        self.__current_background = 0
+        self.__lines_to_cycle = LINES_TO_CYCLE
+        
+        self.__lines_to_speed_up = LINES_TO_SPEED_UP
+
+    @property
+    def show_next(self):
+        return True
+
+    @property
+    def score(self):
+        return self.__score
+
+    def cycle_background(self):
+        if self.__change_background is not None:
+            self.__current_background += 1
+            self.__current_background %= len(BACKGROUNDS)
+            self.__change_background(BACKGROUNDS[self.__current_background])
+        
+    def update(self):
+        Mode.update(self)
+        self.__score += (pow(self.last_lines_completed, 2) * 10)
+        self.__lines_to_speed_up -= self.last_lines_completed
+        if self.__lines_to_speed_up < 0:
+            self.__lines_to_speed_up = LINES_TO_SPEED_UP
+            self.game.increase_speed(10)
+
+        self.__lines_to_cycle -= self.last_lines_completed
+        if self.__lines_to_cycle < 0:
+            self.__lines_to_cycle = LINES_TO_CYCLE
+            self.cycle_background()
+
+
+class Levels(Mode):
+    def __init__(self, size=game.DEFAULT_SIZE,
+                 initial_speed=game.DEFAULT_SPEED,
+                 stages=[],
+                 callbacks=None):
+        Mode.__init__(self, size, initial_speed, callbacks)
+
+        self.__score = 0
 
         self.__lines_to_go = 0
         self.__current_stage = 0
@@ -112,23 +142,14 @@ class Levels(object):
         self.__stages = stages
         self.__game_completed = False
 
-        self.__start_level = start_level_callback
-        self.__end_level = end_level_callback
-        self.__change_background = change_bckgnd_callback
+        self.__start_level_cb = callbacks.get('start_level', None)
+        self.__end_level_cb = callbacks.get('end_level', None)
+        self.__change_background = callbacks.get('change_background', None)
         self.load_level(self.__current_stage)
-
 
     @property
     def show_next(self):
         return self.__show_next
-
-    @property
-    def game(self):
-        return self.__game
-
-    @property
-    def game_over(self):
-        return self.__game.game_over
 
     @property
     def completed(self):
@@ -145,30 +166,39 @@ class Levels(object):
         self.__current_stage = level_no
         level = self.__stages[self.__current_stage]
         new_speed = self.game.speed + level.speed
-        self.__game = game.Tetris(self.__game.size, new_speed)
+        self.set_game(game.Tetris(self.game.size, new_speed))
         for position, block in level.extra_blocks:
-            self.__game.board[position[1]][position[0]] = block
+            self.game.board[position[1]][position[0]] = block
         self.__show_next = level.show_next
         self.__lines_to_go = level.lines_to_go
         if level.background:
-            self.__change_background(level.background)
+            self.__set_background(level.background)
         if self.__start_level:
             self.__start_level(level_no)
         return True
 
-    @property
-    def lines(self):
-        return self.__lines
-
     def update(self):
         if self.completed:
             return
-        lines = self.game.update()
-        self.__score += lines * lines * 10
-        self.__lines_to_go -= lines
+        Mode.update(self)
+        self.__score += (pow(self.last_lines_completed, 2) * 10)
+        self.__lines_to_go -= self.last_lines_completed
         if self.__lines_to_go <= 0:
             if self.__end_level:
                 self.__end_level(level_no)
-            self.__game.quit()
+            self.game.quit()
             if not self.load_level(self.__current_stage + 1):
                 self.__game_completed = True
+
+    def __set_background(self, background):
+        if self.__set_background is not None:
+            self.__change_background(background)
+
+    def __start_level(self, level_number):
+        if self.__start_level_cb is not None:
+            self.__start_level_cb(level_number)
+
+    def __end_level(self, level_number):
+        if self.__end_level_cb is not None:
+            self.__end_level_cb(level_number)
+            
