@@ -33,8 +33,6 @@ class Aftris(object):
         
         self.__screen = screen
         self.change_background(pygame.image.load('res/ingamegnd.png'))
-        self.__screen.blit(self.__background, (0, 0))
-        pygame.display.flip()
         self.__tetris = None
         if mode == 0:
             self.__tetris = modes.Levels(
