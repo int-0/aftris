@@ -185,7 +185,7 @@ class Levels(Mode):
         self.__lines_to_go -= self.last_lines_completed
         if self.__lines_to_go <= 0:
             if self.__end_level:
-                self.__end_level(level_no)
+                self.__end_level(self.__current_stage)
             self.game.quit()
             if not self.load_level(self.__current_stage + 1):
                 self.__game_completed = True

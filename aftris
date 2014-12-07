@@ -5,7 +5,7 @@ import pygame
 import modes
 from menu import Menu
 from render import Render
-from controller import Keyboard
+from controller import EventDispatcher, Player1
 from cuts import ShowLogo
 
 
@@ -27,6 +27,10 @@ TEST_LEVELS=[
 
 class Aftris(object):
     def __init__(self, screen, mode):
+        self.__events = EventDispatcher()
+        self.__player = Player1()
+        self.__events.add_key_down_listener(self.__player)
+        
         self.__screen = screen
         self.change_background(pygame.image.load('res/ingamegnd.png'))
         self.__screen.blit(self.__background, (0, 0))
@@ -59,12 +63,12 @@ class Aftris(object):
         self.__reatach_user()
         
     def __reatach_user(self):
-        self.__user = Keyboard(self.__tetris.game)
+        self.__player.control(self.__tetris.game)
         self.__render = Render(self.__tetris)
 
     def run(self):
         while not self.__tetris.game_over:
-            self.__user.update()
+            self.__events.update()
             self.__tetris.update()
 
             dirty = [self.__screen.blit(self.__render.update(), (20, 40))]
