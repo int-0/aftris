@@ -66,7 +66,6 @@ class Aftris(object):
         while not self.__tetris.game_over:
             self.__events.update()
             self.__tetris.update()
-
             dirty = self.__tetris.render(self.__screen)
             pygame.display.update(dirty)
 

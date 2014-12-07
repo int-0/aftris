@@ -37,6 +37,11 @@ class Render(object):
                                  (255, 255, 255, 255),
                                  (0, 0, 0, 255))
 
+    def level(self, level):
+        return theme.FONT.render('%02d' % level, 1,
+                                 (255, 255, 255, 255),
+                                 (0, 0, 0, 255))
+
     def update(self):
         for y in range(len(self.__game.board)):
             for x in range(len(self.__game.board[y])):

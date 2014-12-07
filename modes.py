@@ -213,6 +213,12 @@ class Levels(Mode):
             if not self.load_level(self.__current_stage + 1):
                 self.__game_completed = True
 
+    def render(self, destination):
+        dirty = Mode.render(self, destination)
+        dirty.append(destination.blit(self.renderer.level(self.__current_stage),
+                                      (350, 10)))
+        return dirty
+        
     def __set_background(self, background):
         if self.__set_background is not None:
             self.__change_background(background)
