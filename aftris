@@ -4,7 +4,6 @@ import pygame
 
 import modes
 from menu import Menu
-from render import Render
 from controller import EventDispatcher, Player1
 from cuts import ShowLogo
 
@@ -62,16 +61,13 @@ class Aftris(object):
         
     def __reatach_user(self):
         self.__player.control(self.__tetris.game)
-        self.__render = Render(self.__tetris)
 
     def run(self):
         while not self.__tetris.game_over:
             self.__events.update()
             self.__tetris.update()
 
-            dirty = [self.__screen.blit(self.__render.update(), (20, 40))]
-            dirty.append(self.__screen.blit(self.__render.next, (250, 50)))
-            dirty.append(self.__screen.blit(self.__render.score, (250, 10)))
+            dirty = self.__tetris.render(self.__screen)
             pygame.display.update(dirty)
 
         

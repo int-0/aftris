@@ -3,6 +3,8 @@
 import game
 import pygame
 
+from render import Render
+
 LINES_TO_SPEED_UP = 10
 
 BACKGROUNDS = [
@@ -46,20 +48,39 @@ class Mode(object):
                  initial_speed=game.DEFAULT_SPEED,
                  callbacks={}):
         self.__game = game.Tetris(board_size, initial_speed)
+        self.__render = Render(self.game)
+
         self.__last_completed = 0
         self.__lines = 0
-        
+
     @property
     def show_next(self):
         return False
 
+    @property
+    def size(self):
+        return self.game.size
+    
     @property
     def game(self):
         return self.__game
 
     def set_game(self, game):
         self.__game = game
-        
+        self.__render = Render(self.game)
+
+    @property
+    def renderer(self):
+        return self.__render
+
+    def render(self, destination):
+        dirty = [destination.blit(self.renderer.update(), (20, 40))]
+        if self.show_next:
+            dirty.append(destination.blit(self.renderer.next, (250, 50)))
+        dirty.append(destination.blit(self.renderer.score(self.score),
+                                      (250, 10)))
+        return dirty
+    
     @property
     def game_over(self):
         return self.__game.game_over
@@ -98,6 +119,8 @@ class Forever(Mode):
         self.__lines_to_cycle = LINES_TO_CYCLE
         
         self.__lines_to_speed_up = LINES_TO_SPEED_UP
+
+        self.__render = Render(self.game)
 
     @property
     def show_next(self):

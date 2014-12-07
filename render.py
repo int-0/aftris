@@ -7,8 +7,7 @@ import basic as theme
 
 class Render(object):
     def __init__(self, game):
-        self.__mode = game
-        self.__game = self.__mode.game
+        self.__game = game
 
         scr_size = (self.__game.size[0] * theme.BRICK_SIZE + 4,
                     self.__game.size[1] * theme.BRICK_SIZE + 4)
@@ -33,9 +32,8 @@ class Render(object):
     def next(self):
         return self.__next
 
-    @property
-    def score(self):
-        return theme.FONT.render('%04d' % self.__mode.score, 1,
+    def score(self, score):
+        return theme.FONT.render('%04d' % score, 1,
                                  (255, 255, 255, 255),
                                  (0, 0, 0, 255))
 
