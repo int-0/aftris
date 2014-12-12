@@ -6,7 +6,7 @@ import modes
 from menu import Menu
 from controller import EventDispatcher, Player1
 from cuts import ShowLogo
-
+import resources
 
 TEST_LEVELS=[
     modes.Stage({
@@ -14,13 +14,13 @@ TEST_LEVELS=[
         'extra_blocks': [((0, 0), 1)],
         'lines_to_go': 10,
         'show_next': True,
-        'background': pygame.image.load('res/ingamegnd.png')}),
+        'background': resources.load_image('ingamegnd.png')}),
     modes.Stage({
         'speed_var': 0,
         'extra_blocks': [((1, 0), 1)],
         'lines_to_go': 10,
         'show_next': True,
-        'background': pygame.image.load('res/ingamegnd2.png')})
+        'background': resources.load_image('ingamegnd2.png')})
 ]
 
 
@@ -31,7 +31,7 @@ class Aftris(object):
         self.__events.add_key_down_listener(self.__player)
         
         self.__screen = screen
-        self.change_background(pygame.image.load('res/ingamegnd.png'))
+        self.change_background(resources.load_image('ingamegnd.png'))
         self.__tetris = None
         if mode == 0:
             self.__tetris = modes.Levels(
@@ -79,7 +79,7 @@ def main():
         menu = Menu(screen, ['Level Mode',
                              'Endless Mode',
                              'Exit'],
-                    pygame.image.load('res/menugnd.png'))
+                    resources.load_image('menugnd.png'))
         menu.run()
         exit_game = (menu.cancelled or menu.selected == 2)
 

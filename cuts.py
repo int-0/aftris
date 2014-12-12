@@ -4,6 +4,8 @@ import time
 import numpy
 import pygame
 
+import resources
+
 def ShowImage(screen, image):
     center = screen.get_rect().center
     screen.blit(image,
@@ -35,10 +37,10 @@ def FadeTo(screen, source, destination, frames=20):
 def ShowLogo(screen):
     clock = pygame.time.Clock()
     logo_frame = [
-        pygame.image.load('res/int0_sketch.png'),
-        pygame.image.load('res/int0_pencil.png'),
-        pygame.image.load('res/int0_ink.png'),
-        pygame.image.load('res/int0_final.png')
+        resources.load_image('int0_sketch.png'),
+        resources.load_image('int0_pencil.png'),
+        resources.load_image('int0_ink.png'),
+        resources.load_image('int0_final.png')
     ]
     white = pygame.Surface(logo_frame[0].get_size())
     white.fill((255, 255, 255, 255))

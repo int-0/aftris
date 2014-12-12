@@ -4,12 +4,13 @@ import game
 import pygame
 
 from render import Render
+import resources
 
 LINES_TO_SPEED_UP = 10
 
 BACKGROUNDS = [
-    pygame.image.load('res/ingamegnd.png'),
-    pygame.image.load('res/ingamegnd2.png')
+    resources.load_image('ingamegnd.png'),
+    resources.load_image('ingamegnd2.png')
 ]
 
 LINES_TO_CYCLE = 19
