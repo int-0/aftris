@@ -7,6 +7,9 @@ import os.path
 import platform
 
 
+pygame.font.init()
+FONT = pygame.font.Font(None, 36)
+
 CONFIG_FILE = 'config.json'
 
 

@@ -5,7 +5,7 @@ import pygame
 import modes
 from menu import Menu
 from controller import EventDispatcher, Player1
-from cuts import ShowLogo
+from cuts import ShowLogo, StartLevel
 import resources
 
 TEST_LEVELS=[
@@ -55,6 +55,7 @@ class Aftris(object):
         pygame.display.flip()
         
     def new_level(self, level):
+        StartLevel(self.__screen, self.__background, level)
         if self.__tetris is None:
             return
         self.__reatach_user()

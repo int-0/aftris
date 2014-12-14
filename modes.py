@@ -197,8 +197,7 @@ class Levels(Mode):
         self.__lines_to_go = level.lines_to_go
         if level.background:
             self.__set_background(level.background)
-        if self.__start_level:
-            self.__start_level(level_no)
+        self.__start_level(level_no)
         return True
 
     def update(self):
@@ -208,8 +207,7 @@ class Levels(Mode):
         self.__score += (pow(self.last_lines_completed, 2) * 10)
         self.__lines_to_go -= self.last_lines_completed
         if self.__lines_to_go <= 0:
-            if self.__end_level:
-                self.__end_level(self.__current_stage)
+            self.__end_level(self.__current_stage)
             self.game.quit()
             if not self.load_level(self.__current_stage + 1):
                 self.__game_completed = True

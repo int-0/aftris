@@ -4,8 +4,7 @@ import time
 import pygame
 from cuts import FadeTo
 
-pygame.font.init()
-FONT = pygame.font.Font(None, 50)
+import resources
 
 class Menu(object):
     def __init__(self, screen, options=[], background=None):
@@ -14,8 +13,8 @@ class Menu(object):
 
         self.__options = []
         for option in options:
-            self.__options.append(FONT.render(option, 1,
-                                              (255, 255, 255, 255)))
+            self.__options.append(resources.FONT.render(option, 1,
+                                                        (255, 255, 255, 255)))
 
         if background:
             self.__gnd = background
@@ -43,8 +42,8 @@ class Menu(object):
         return self.__cancelled
 
     def add_option(self, option):
-        self.__options.append(FONT.render(option, 1,
-                                          (255, 255, 255, 255)))
+        self.__options.append(resources.FONT.render(option, 1,
+                                                    (255, 255, 255, 255)))
 
     def select(self, option):
         self.__dir = .005
