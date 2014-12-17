@@ -80,6 +80,7 @@ def main():
         menu = Menu(screen, ['Level Mode',
                              'Endless Mode',
                              'Exit'],
+                    resources.load_image('tile.png'),
                     resources.load_image('menugnd.png'))
         menu.run()
         exit_game = (menu.cancelled or menu.selected == 2)
