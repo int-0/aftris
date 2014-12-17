@@ -73,6 +73,8 @@ class Aftris(object):
         
 def main():
     screen = pygame.display.set_mode((640, 480))
+    resources.load_music('instant_remedy-ocean_loader.mp3')
+    pygame.mixer.music.play(-1)
     ShowLogo(screen)
 
     exit_game = False

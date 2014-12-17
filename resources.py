@@ -77,3 +77,9 @@ def load_image(image_name):
     #        this is not mandatory
     # surface = surface.convert_alpha()
     return surface
+
+
+def load_music(music_name):
+    filename = __get_file(music_name, __resource_folder())
+    pygame.mixer.music.load(filename)
+    
