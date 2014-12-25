@@ -82,4 +82,8 @@ def load_image(image_name):
 def load_music(music_name):
     filename = __get_file(music_name, __resource_folder())
     pygame.mixer.music.load(filename)
-    
+
+
+def load_sound(sound_name):
+    filename = __get_file(sound_name, __resource_folder())
+    return pygame.mixer.Sound(filename)

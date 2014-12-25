@@ -106,6 +106,9 @@ class Mode(object):
         self.__last_completed = self.game.update()
         self.__lines += self.__last_completed
 
+    def set_game_callback(self, callback_id, callback):
+        self.game.set_callback(callback_id, callback)
+        
 
 class Forever(Mode):
     def __init__(self, size=game.DEFAULT_SIZE,

@@ -34,7 +34,7 @@ DEFAULT_SPEED = 400
 
 class Tetris(object):
     def __init__(self, size=DEFAULT_SIZE, speed=DEFAULT_SPEED,
-                 pieces=DEFAULT_PIECES):
+                 pieces=DEFAULT_PIECES, callbacks={}):
 
         self.__game_speed = speed
         self.__current_speed = speed
@@ -47,6 +47,8 @@ class Tetris(object):
         self.__current = self.any_piece
         self.__current_position = (5 - (len(self.__current[0]) / 2), 0)
         self.__game_over = False
+
+        self.__callbacks = callbacks
 
     @property
     def pieces(self):
@@ -110,12 +112,14 @@ class Tetris(object):
 
     def get_another_piece(self, drop=True):
         if drop:
+            self.place_piece_cb()
             for y in range(len(self.__current)):
                 for x in range(len(self.__current[y])):
                     if self.__current[y][x]:
                         x_board = self.__current_position[0] + x
                         y_board = self.__current_position[1] + y
                         self.__board[y_board][x_board] = self.__current[y][x]
+        self.new_piece_cb()
         self.__current = self.__next
         self.__current_speed = self.__game_speed
         self.__next = self.any_piece
@@ -125,42 +129,53 @@ class Tetris(object):
     def rotate_CW(self):
         if not self.piece_fit_in(self.CW_rotated_piece,
                                  self.__current_position):
+            self.blocked_move_cb()
             return False
         self.__current = self.CW_rotated_piece
+        self.move_cb()
         return True
 
     def rotate_CCW(self):
         if not self.piece_fit_in(self.CCW_rotated_piece,
                                  self.__current_position):
+            self.blocked_move_cb()
             return False
         self.__current = self.CCW_rotated_piece
+        self.move_cb()
         return True
 
     def move_left(self):
         if not self.current_piece_fit_in((self.__current_position[0] - 1,
                                           self.__current_position[1])):
+            self.blocked_move_cb()
             return False
         self.__current_position = (self.__current_position[0] - 1,
                                    self.__current_position[1])
+        self.move_cb()
         return True
 
     def move_right(self):
         if not self.current_piece_fit_in((self.__current_position[0] + 1,
                                           self.__current_position[1])):
+            self.blocked_move_cb()
             return False
         self.__current_position = (self.__current_position[0] + 1,
                                    self.__current_position[1])
+        self.move_cb()
         return True
 
     def move_down(self):
         if not self.current_piece_fit_in((self.__current_position[0],
                                           self.__current_position[1] + 1)):
+            self.blocked_move_cb()
             return False
         self.__current_position = (self.__current_position[0],
-                                   self.__current_position[1] + 1)
+                                   self.__current_position[1] + 1) 
+        self.move_cb()
         return True
 
     def drop_piece(self):
+        self.drop_piece_cb()
         self.__current_speed = 0
 
     def increase_speed(self, units=1):
@@ -195,6 +210,9 @@ class Tetris(object):
                     self.__board[y][x] = self.__board[y - 1][x]
             for x in range(len(self.__board[0])):
                 self.__board[0][x] = 0
+            callback = self.__callbacks.get('row_clear', None)
+            if callback:
+                callback()
             return True
         return False
 
@@ -219,3 +237,31 @@ class Tetris(object):
                     self.remove_row(row)
 
         return lines
+
+    def set_callback(self, callback_id, callback):
+        self.__callbacks[callback_id] = callback
+        
+    def new_piece_cb(self):
+        callback = self.__callbacks.get('new_piece', None)
+        if callback:
+            callback()
+
+    def drop_piece_cb(self):
+        callback = self.__callbacks.get('drop_piece', None)
+        if callback:
+            callback()
+        
+    def place_piece_cb(self):
+        callback = self.__callbacks.get('place_piece', None)
+        if callback:
+            callback()
+
+    def blocked_move_cb(self):
+        callback = self.__callbacks.get('blocked_move', None)
+        if callback:
+            callback()
+
+    def move_cb(self):
+        callback = self.__callbacks.get('move', None)
+        if callback:
+            callback()
