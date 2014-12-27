@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import random
+from beatbox import AUDIO
 
 DEFAULT_PIECES = [
     [[1, 1],
@@ -247,6 +248,7 @@ class Tetris(object):
             callback()
 
     def drop_piece_cb(self):
+        AUDIO.play_sound('drop')
         callback = self.__callbacks.get('drop_piece', None)
         if callback:
             callback()

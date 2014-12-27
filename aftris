@@ -7,6 +7,7 @@ from menu import Menu
 from controller import EventDispatcher, Player1
 from cuts import ShowLogo, StartLevel
 import resources
+from beatbox import AUDIO
 
 TEST_LEVELS=[
     modes.Stage({
@@ -53,8 +54,6 @@ class Aftris(object):
                 }
             )
         self.__reatach_user()
-        self.__tetris.set_game_callback('drop_piece',
-                                        self.__sounds['drop'].play)
         
     def change_background(self, new_background):
         self.__background = new_background
@@ -79,9 +78,15 @@ class Aftris(object):
 
         
 def main():
+    # Setup screen
     screen = pygame.display.set_mode((640, 480))
-    resources.load_music('instant_remedy-ocean_loader.mp3')
-    pygame.mixer.music.play(-1)
+    # Setup audio
+    AUDIO.register_music('main',
+                         resources.load_music('instant_remedy-ocean_loader.mp3'))
+    AUDIO.register_sound('drop',
+                       resources.load_sound('131142__flameeagle__block.ogg'))
+    AUDIO.set_bgm_music('main')
+    
     ShowLogo(screen)
 
     exit_game = False
