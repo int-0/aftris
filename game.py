@@ -31,7 +31,7 @@ DEFAULT_PIECES = [
 ]
 
 DEFAULT_SIZE = (10, 20)
-DEFAULT_SPEED = 400
+DEFAULT_SPEED = 80
 
 class Tetris(object):
     def __init__(self, size=DEFAULT_SIZE, speed=DEFAULT_SPEED,

@@ -8,6 +8,7 @@ from controller import EventDispatcher, Player1
 from cuts import ShowLogo, StartLevel
 import resources
 from beatbox import AUDIO
+from showroom import ShowRoom
 
 TEST_LEVELS=[
     modes.Stage({
@@ -32,6 +33,8 @@ class Aftris(object):
         self.__events.add_key_down_listener(self.__player)
         
         self.__screen = screen
+        self.__scr = ShowRoom()
+        
         self.change_background(resources.load_image('ingamegnd.png'))
         self.__tetris = None
 
@@ -69,17 +72,23 @@ class Aftris(object):
     def __reatach_user(self):
         self.__player.control(self.__tetris.game)
 
-    def run(self):
-        while not self.__tetris.game_over:
-            self.__events.update()
-            self.__tetris.update()
-            dirty = self.__tetris.render(self.__screen)
-            pygame.display.update(dirty)
-
+    def update(self):
+        self.__events.update()
+        self.__tetris.update()
+        dirty = self.__tetris.render(self.__scr)
+        pygame.display.update(dirty)
+        if self.__tetris.game_over:
+            self.__scr.stop()
         
+    def run(self):
+        self.__scr.set_update_cb(self.update)
+        self.__scr.loop()
+        
+
 def main():
     # Setup screen
     screen = pygame.display.set_mode((640, 480))
+    
     # Setup audio
     AUDIO.register_music('main',
                          resources.load_music('instant_remedy-ocean_loader.mp3'))
