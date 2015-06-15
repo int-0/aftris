@@ -5,8 +5,10 @@ import pygame
 import modes
 from menu import Menu
 from controller import EventDispatcher, Player1
-from cuts import ShowLogo
+from cuts import ShowLogo, StartLevel
 import resources
+from beatbox import AUDIO
+from showroom import ShowRoom
 
 TEST_LEVELS=[
     modes.Stage({
@@ -31,8 +33,15 @@ class Aftris(object):
         self.__events.add_key_down_listener(self.__player)
         
         self.__screen = screen
+        self.__scr = ShowRoom()
+        
         self.change_background(resources.load_image('ingamegnd.png'))
         self.__tetris = None
+
+        self.__sounds = {
+            'drop': resources.load_sound('131142__flameeagle__block.ogg')
+            }
+        
         if mode == 0:
             self.__tetris = modes.Levels(
                 stages=TEST_LEVELS,
@@ -48,13 +57,14 @@ class Aftris(object):
                 }
             )
         self.__reatach_user()
-
+        
     def change_background(self, new_background):
         self.__background = new_background
         self.__screen.blit(self.__background, (0, 0))
         pygame.display.flip()
         
     def new_level(self, level):
+        StartLevel(self.__screen, self.__background, level)
         if self.__tetris is None:
             return
         self.__reatach_user()
@@ -62,16 +72,30 @@ class Aftris(object):
     def __reatach_user(self):
         self.__player.control(self.__tetris.game)
 
-    def run(self):
-        while not self.__tetris.game_over:
-            self.__events.update()
-            self.__tetris.update()
-            dirty = self.__tetris.render(self.__screen)
-            pygame.display.update(dirty)
-
+    def update(self):
+        self.__events.update()
+        self.__tetris.update()
+        dirty = self.__tetris.render(self.__scr)
+        pygame.display.update(dirty)
+        if self.__tetris.game_over:
+            self.__scr.stop()
         
+    def run(self):
+        self.__scr.set_update_cb(self.update)
+        self.__scr.loop()
+        
+
 def main():
+    # Setup screen
     screen = pygame.display.set_mode((640, 480))
+    
+    # Setup audio
+    AUDIO.register_music('main',
+                         resources.load_music('instant_remedy-ocean_loader.mp3'))
+    AUDIO.register_sound('drop',
+                       resources.load_sound('131142__flameeagle__block.ogg'))
+    AUDIO.set_bgm_music('main')
+    
     ShowLogo(screen)
 
     exit_game = False
@@ -79,6 +103,7 @@ def main():
         menu = Menu(screen, ['Level Mode',
                              'Endless Mode',
                              'Exit'],
+                    resources.load_image('tile.png'),
                     resources.load_image('menugnd.png'))
         menu.run()
         exit_game = (menu.cancelled or menu.selected == 2)

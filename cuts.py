@@ -66,3 +66,27 @@ def ShowLogo(screen):
         black.fill((0, 0, 0, w))
         screen.blit(black, (0, 0))
         pygame.display.flip()
+
+
+def StartLevel(screen, background, level_no):
+    size = resources.FONT.size('Level %s' % level_no)
+    screen_size = screen.get_size()
+    center = ((screen_size[0] / 2) - (size[0] / 2),
+              (screen_size[1] / 2) - (size[1] / 2))
+    for alpha in range(255):
+        screen.blit(background, (0, 0))
+        level = resources.FONT.render('Level %s' % level_no, 1,
+                                      (alpha, alpha, alpha, 255))
+        screen.blit(level, center)
+        pygame.display.flip()
+    time.sleep(1.0)
+    
+    for alpha in range(255):
+        screen.blit(background, (0, 0))
+        level = resources.FONT.render('Level %s' % level_no, 1,
+                                      (255 - alpha, 255 - alpha, 255 -alpha, 255))
+        screen.blit(level, center)
+        pygame.display.flip()
+
+    screen.blit(background, (0, 0))
+    pygame.display.flip()

@@ -7,6 +7,9 @@ import os.path
 import platform
 
 
+pygame.font.init()
+FONT = pygame.font.Font(None, 36)
+
 CONFIG_FILE = 'config.json'
 
 
@@ -74,3 +77,13 @@ def load_image(image_name):
     #        this is not mandatory
     # surface = surface.convert_alpha()
     return surface
+
+
+def load_music(music_name):
+    filename = __get_file(music_name, __resource_folder())
+    return filename
+
+
+def load_sound(sound_name):
+    filename = __get_file(sound_name, __resource_folder())
+    return pygame.mixer.Sound(filename)

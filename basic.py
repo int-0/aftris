@@ -30,6 +30,3 @@ BRICKS[6].fill(color.THECOLORS['yellow'])
 pygame.draw.rect(BRICKS[6], (127, 127, 0, 255), BRICKS[6].get_rect(), 1)
 BRICKS[7].fill(color.THECOLORS['green'])
 pygame.draw.rect(BRICKS[7], (0, 127, 0, 255), BRICKS[7].get_rect(), 1)
-
-pygame.font.init()
-FONT = pygame.font.Font(None, 36)

@@ -4,18 +4,25 @@ import time
 import pygame
 from cuts import FadeTo
 
-pygame.font.init()
-FONT = pygame.font.Font(None, 50)
+import resources
 
 class Menu(object):
-    def __init__(self, screen, options=[], background=None):
+    def __init__(self, screen, options=[], tile=None, background=None):
         self.__scr = screen
         self.__center = self.__scr.get_rect().center
 
         self.__options = []
         for option in options:
-            self.__options.append(FONT.render(option, 1,
-                                              (255, 255, 255, 255)))
+            self.__options.append(resources.FONT.render(option, 1,
+                                                        (255, 255, 255, 255)))
+
+        self.__tile = tile
+        if self.__tile:
+            self.__tile_center = (
+                (self.__scr.get_width() / 2) - (self.__tile.get_width() / 2),
+                (self.__tile.get_height() / 2))
+        else:
+            self.__tile_center = None
 
         if background:
             self.__gnd = background
@@ -43,8 +50,8 @@ class Menu(object):
         return self.__cancelled
 
     def add_option(self, option):
-        self.__options.append(FONT.render(option, 1,
-                                          (255, 255, 255, 255)))
+        self.__options.append(resources.FONT.render(option, 1,
+                                                    (255, 255, 255, 255)))
 
     def select(self, option):
         self.__dir = .005
@@ -53,9 +60,14 @@ class Menu(object):
             option = option + len(self.__options)
         self.__selected = option % len(self.__options)
         self.__selected_option = self.__options[self.__selected].copy()
+
+    def __tile_animation(self):
+        if self.__tile:
+            self.__scr.blit(self.__tile, self.__tile_center)
         
     def __draw(self):
         self.__scr.blit(self.__gnd, (0, 0))
+        self.__tile_animation()
         opno = 0
         for option in self.__options:
             y = option.get_size()[1]

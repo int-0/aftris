@@ -3,6 +3,7 @@
 import pygame
 from pygame.locals import color
 
+import resources
 import basic as theme
 
 class Render(object):
@@ -33,14 +34,14 @@ class Render(object):
         return self.__next
 
     def score(self, score):
-        return theme.FONT.render('%04d' % score, 1,
-                                 (255, 255, 255, 255),
-                                 (0, 0, 0, 255))
+        return resources.FONT.render('%04d' % score, 1,
+                                     (255, 255, 255, 255),
+                                     (0, 0, 0, 255))
 
     def level(self, level):
-        return theme.FONT.render('%02d' % level, 1,
-                                 (255, 255, 255, 255),
-                                 (0, 0, 0, 255))
+        return resources.FONT.render('%02d' % level, 1,
+                                     (255, 255, 255, 255),
+                                     (0, 0, 0, 255))
 
     def update(self):
         for y in range(len(self.__game.board)):
