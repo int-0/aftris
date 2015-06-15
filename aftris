@@ -11,18 +11,8 @@ from beatbox import AUDIO
 from showroom import ShowRoom
 
 TEST_LEVELS=[
-    modes.Stage({
-        'speed_var': 0,
-        'extra_blocks': [((0, 0), 1)],
-        'lines_to_go': 10,
-        'show_next': True,
-        'background': resources.load_image('ingamegnd.png')}),
-    modes.Stage({
-        'speed_var': 0,
-        'extra_blocks': [((1, 0), 1)],
-        'lines_to_go': 10,
-        'show_next': True,
-        'background': resources.load_image('ingamegnd2.png')})
+    resources.load_level('test_level0.json'),
+    resources.load_level('test_level1.json')
 ]
 
 

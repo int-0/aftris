@@ -6,6 +6,7 @@ import pygame
 import os.path
 import platform
 
+import modes
 
 pygame.font.init()
 FONT = pygame.font.Font(None, 36)
@@ -87,3 +88,15 @@ def load_music(music_name):
 def load_sound(sound_name):
     filename = __get_file(sound_name, __resource_folder())
     return pygame.mixer.Sound(filename)
+
+
+# FIXME: https://github.com/int-0/aftris/issues/17
+#
+def load_level(level_filename):
+    filename = __get_file(level_filename, __resource_folder())
+    with open(filename, 'r') as fd:
+        level = json.load(fd)
+    level.update({
+        'background': load_image(level['background'])
+        })
+    return modes.Stage(level)
